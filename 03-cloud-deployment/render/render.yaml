@@ -18,7 +18,7 @@ services:
     rootDir: 03-cloud-deployment/render
 
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
+    startCommand: ls -R && uvicorn app:app --host 0.0.0.0 --port $PORT
 
     healthCheckPath: /health   # Render check path này
 

@@ -12,10 +12,10 @@ services:
     region: singapore
     plan: free
 
-    rootDir: 03-cloud-deployment   # 🔥 CHỈNH LẠI
+    rootDir: 03-cloud-deployment   
 
     buildCommand: pip install -r render/requirements.txt
-    startCommand: uvicorn render.app:app --host 0.0.0.0 --port $PORT
+    startCommand: uvicorn 03-cloud-deployment.render.app:app --host 0.0.0.0 --port $PORT
 
     healthCheckPath: /health
     autoDeploy: true

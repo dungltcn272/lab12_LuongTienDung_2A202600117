@@ -6,37 +6,46 @@
 # ============================================================
 
 services:
+  # ──────────────────────────────────────
+  # Web Service — AI Agent
+  # ──────────────────────────────────────
   - type: web
     name: ai-agent
     runtime: python
-    region: singapore
-    plan: free
+    region: singapore         # Chọn region gần user nhất
+    plan: free                # free | starter | standard | pro
 
-    rootDir: 03-cloud-deployment   
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
 
-    buildCommand: pip install -r render/requirements.txt
-    startCommand: uvicorn 03-cloud-deployment.render.app:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health   # Render check path này
 
-    healthCheckPath: /health
-    autoDeploy: true
+    autoDeploy: true           # Auto deploy khi push to GitHub
 
     envVars:
       - key: ENVIRONMENT
         value: production
       - key: PYTHON_VERSION
         value: 3.11.0
+      # Secrets — set qua Render Dashboard (không commit giá trị thật)
       - key: OPENAI_API_KEY
-        sync: false
+        sync: false            # sync: false = set thủ công trên dashboard
       - key: AGENT_API_KEY
-        generateValue: true
+        generateValue: true    # Render tự sinh random value
 
+    # Disk (nếu agent cần lưu file)
+    # disk:
+    #   name: agent-data
+    #   mountPath: /data
+    #   sizeGB: 1
+
+  # ──────────────────────────────────────
+  # Redis (dùng Render Redis add-on)
+  # ──────────────────────────────────────
   - type: redis
     name: agent-cache
     plan: free
     maxmemoryPolicy: allkeys-lru
-    ipAllowList:
-      - source: 0.0.0.0/0
-        description: allow all (dev only)
 
 # ============================================================
 # Cách deploy:
